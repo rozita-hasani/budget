@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: smartbudget-db
+
+    environment:
+      POSTGRES_USER: smartbudget
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: smartbudget
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
