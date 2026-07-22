@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "tsx src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
-    "db:test": "tsx src/test-db.ts"
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
