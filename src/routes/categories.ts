@@ -68,10 +68,3 @@ router.delete("/:id", async (req, res) => {
 })
 
 export default router;
-
-// {
-//     "id": "d7c0ef53-6821-4864-9844-fc2ebcba5b7b",
-//     "name": "Food",
-//     "color": "#22c55e",
-//     "userId": "c2420ec6-656f-4951-b9f9-a2d1070249ef"
-// }
