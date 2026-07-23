@@ -1,5 +1,6 @@
 import express from "express";
 import authRoutes from "./routes/auth";
+import {authMiddleware} from "./middleware/auth";
 
 const app = express();
 
@@ -11,5 +12,12 @@ app.get("/", (req, res) => {
         message: "SmartBudget API is running"
     });
 });
+
+app.get("/profile", authMiddleware, (req, res) => {
+    res.json({
+        message: "Welcome!",
+        user: req.user
+    })
+})
 
 app.listen(3000);
