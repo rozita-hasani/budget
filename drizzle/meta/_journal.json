@@ -15,6 +15,13 @@
       "when": 1782025806714,
       "tag": "0001_spicy_zarda",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784811296031,
+      "tag": "0002_absurd_solo",
+      "breakpoints": true
     }
   ]
 }

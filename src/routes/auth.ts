@@ -20,7 +20,7 @@ router.post("/register", async (req, res) => {
         })
         .returning();
 
-    res.status(201).json(createdUser[0]);
+    return res.status(201).json(createdUser[0]);
 });
 
 router.post("/login", async (req, res) => {
