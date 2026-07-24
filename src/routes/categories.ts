@@ -2,11 +2,18 @@ import {Router} from 'express';
 import {db} from "../db"
 import {categories} from "../db/schema";
 import {and, eq} from "drizzle-orm";
+import {categorySchema} from "../validations/category";
 
 const router = Router();
 
 router.post("/", async (req, res) => {
-    const {name, color} = req.body;
+    const result = categorySchema.safeParse(req.body);
+
+    if (!result.success) {
+        return res.status(400).json(result.error);
+    }
+
+    const {name, color} = result.data;
     const userId = req.user!.userId;
 
     const createdCategory = await db
@@ -33,7 +40,13 @@ router.get("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
     const id = req.params.id as string;
-    const {name, color} = req.body;
+    const result = categorySchema.safeParse(req.body);
+
+    if (!result.success) {
+        return res.status(400).json(result.error);
+    }
+
+    const {name, color} = result.data;
 
     const updated = await db
         .update(categories)
@@ -48,6 +61,10 @@ router.put("/:id", async (req, res) => {
             )
         )
         .returning();
+
+    if (updated.length === 0) {
+        return res.status(404).json({message: "Category not found"});
+    }
 
     return res.json(updated[0]);
 })

@@ -4,11 +4,18 @@ import { db } from "../db";
 import { users } from "../db/schema";
 import {eq} from "drizzle-orm";
 import jwt from "jsonwebtoken";
+import {loginSchema, registerSchema} from "../validations/auth";
 
 const router = Router();
 
 router.post("/register", async (req, res) => {
-    const { email, password, username } = req.body;
+    const result = registerSchema.safeParse(req.body);
+
+    if (!result.success) {
+        return res.status(400).json(result.error)
+    }
+
+    const { email, password, username } = result.data;
     const passwordHash = await bcrypt.hash(password, 10);
 
     const createdUser = await db
@@ -24,7 +31,13 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
+    const result = loginSchema.safeParse(req.body);
+
+    if (!result.success) {
+        return res.status(400).json(result.error);
+    }
+
+    const { email, password } = result.data;
 
     const user = await db.query.users.findFirst({
         where: eq(users.email, email)
