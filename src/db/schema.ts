@@ -7,3 +7,10 @@ export const users = pgTable("users", {
     passwordHash: text("password_hash").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const categories = pgTable("categories", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    name: text("name").notNull().unique(),
+    color: text("color").notNull(),
+    userId: uuid("user_id").notNull().references(()=> users.id),
+})
