@@ -7,13 +7,30 @@ import {transactionSchema} from "../validations/transaction";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
+    const { type, categoryId } = req.query;
+    const conditions = [
+        eq(transactions.userId, req.user!.userId),
+    ];
+
+    if (type) {
+        conditions.push(
+            eq(transactions.type, type as "INCOME" | "EXPENSE")
+        );
+    }
+
+    if (categoryId) {
+        conditions.push(
+            eq(transactions.categoryId, categoryId as string)
+        );
+    }
+
     const result = await db
         .select()
         .from(transactions)
-        .where(eq(transactions.userId, req.user!.userId))
+        .where(and(...conditions));
 
     return res.json(result);
-})
+});
 
 router.post("/", async (req, res) => {
     const result = transactionSchema.safeParse(req.body);
