@@ -22,7 +22,7 @@ export const transactionsType = pgEnum("transaction_type", [
 
 export const transactions = pgTable("transactions", {
     id: uuid("id").defaultRandom().primaryKey(),
-    amount: numeric("amount", {precision: 12, scale:2}).notNull(),
+    amount: numeric("amount", {precision: 12, scale:2, mode: "number"}).notNull(),
     type: transactionsType("type").notNull(),
     date: timestamp("date").defaultNow().notNull(),
     note: text("note"),
