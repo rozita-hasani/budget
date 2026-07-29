@@ -1,8 +1,8 @@
 import express from "express";
-import authRoutes from "./routes/auth";
-import categoryRoutes from "./routes/categories"
-import transactionsRoutes from "./routes/transactions";
-import summaryRoutes from "./routes/summary";
+import authRoutes from "./features/auth/auth.routes";
+import categoryRoutes from "./features/categories/categories.routes"
+import transactionsRoutes from "./features/transactions/transactions.routes";
+import summaryRoutes from "./features/summary/summary.routes";
 import {authMiddleware} from "./middleware/auth";
 
 const app = express();
