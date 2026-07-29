@@ -25,8 +25,21 @@ router.get("/", async (req, res) => {
     }
 
     const result = await db
-        .select()
+        .select({
+            id: transactions.id,
+            amount: transactions.amount,
+            type: transactions.type,
+            date: transactions.date,
+            note: transactions.note,
+            category: categories.name,
+            categoryId: transactions.categoryId,
+            userId: transactions.userId,
+        })
         .from(transactions)
+        .innerJoin(
+            categories,
+            eq(transactions.categoryId, categories.id)
+        )
         .where(and(...conditions));
 
     return res.json(result);
