@@ -8,7 +8,7 @@ import {authMiddleware} from "./middleware/auth";
 const app = express();
 
 app.use(express.json());
-app.use("/v1/user", authRoutes);
+app.use("/v1/auth", authRoutes);
 app.use(authMiddleware);
 app.use("/v1/categories", categoryRoutes);
 app.use("/v1/transactions", transactionsRoutes);
