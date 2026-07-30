@@ -1,7 +1,8 @@
 import express from "express";
 import {transactionSchema} from "../../validations/transaction";
-import {deleteTransaction, getTransactionCategory, getTransactions} from "./transactions.repository";
+import {deleteTransaction, getTransactions} from "./transactions.repository";
 import {handleCreateTransaction, handleTransactionUpdate} from "./transactions.service";
+import {toTransactionListResponse, toTransactionResponse} from "./transactions.mapper";
 
 const router = express.Router();
 
@@ -12,7 +13,7 @@ router.get("/", async (req, res) => {
         categoryId: req.query.categoryId as string | undefined,
     });
 
-    return res.json(transactions);
+    return res.json(transactions.map(toTransactionListResponse));
 });
 
 router.post("/", async (req, res) => {
@@ -23,15 +24,9 @@ router.post("/", async (req, res) => {
         return res.status(400).json(result.error);
     }
 
-    const category = await getTransactionCategory(result.data.categoryId, userId);
-
-    if (category.length === 0) {
-        return res.status(404).json({message: "Category not found"});
-    }
-
     const transaction = await handleCreateTransaction({...result.data, userId});
 
-    return res.status(201).json(transaction);
+    return res.status(201).json(toTransactionResponse(transaction));
 });
 
 router.put("/:id", async (req, res) => {
@@ -46,7 +41,7 @@ router.put("/:id", async (req, res) => {
 
     const updatedTransaction = await handleTransactionUpdate({...result.data, id, userId});
 
-    return res.json(updatedTransaction);
+    return res.json(toTransactionResponse(updatedTransaction));
 })
 
 router.delete("/:id", async (req, res) => {
@@ -55,7 +50,7 @@ router.delete("/:id", async (req, res) => {
 
     const deleted = await deleteTransaction(id, userId);
 
-    if (deleted.length === 0) {
+    if (!deleted) {
         return res.status(404).json({message: "Transaction not found"});
     }
 
