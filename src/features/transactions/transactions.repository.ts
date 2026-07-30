@@ -1,8 +1,14 @@
 import {db} from "../../db";
 import {categories, transactions} from "../../db/schema";
 import {and, eq} from "drizzle-orm";
+import {
+    CreateTransactionInput,
+    Transaction,
+    TransactionWithCategory ,
+    UpdateTransactionInput
+} from "./transactions.dto";
 
-export async function getTransactions(data: {userId: string; type?: "INCOME" | "EXPENSE"; categoryId?: string}) {
+export async function getTransactions(data: {userId: string; type?: "INCOME" | "EXPENSE"; categoryId?: string}) : Promise<TransactionWithCategory[]> {
     const conditions = [
         eq(transactions.userId, data.userId),
     ];
@@ -44,27 +50,14 @@ export async function getTransactionCategory(categoryId:string, userId:string) {
                 eq(categories.userId, userId)));
 }
 
-export async function createTransaction(data: {
-    amount: number;
-    type: "INCOME" | "EXPENSE";
-    note?: string;
-    categoryId: string;
-    userId: string;
-}) {
+export async function createTransaction(data: CreateTransactionInput): Promise<Transaction[]> {
     return db
         .insert(transactions)
         .values(data)
         .returning();
 }
 
-export async function updateTransaction(data: {
-    amount: number;
-    type: "INCOME" | "EXPENSE";
-    note?: string;
-    categoryId: string;
-    userId: string;
-    id: string;
-}) {
+export async function updateTransaction(data: UpdateTransactionInput): Promise<Transaction[]> {
     return db
         .update(transactions)
         .set({
@@ -82,8 +75,8 @@ export async function updateTransaction(data: {
         .returning();
 }
 
-export async function deleteTransaction(id: string, userId: string) {
-    return db
+export async function deleteTransaction(id: string, userId: string): Promise<boolean> {
+    const deleted = await db
         .delete(transactions)
         .where(
             and(
@@ -92,4 +85,6 @@ export async function deleteTransaction(id: string, userId: string) {
             )
         )
         .returning();
+
+    return deleted.length > 0;
 }

@@ -1,6 +1,7 @@
 import {updateCategory} from "./categories.repository";
+import {Category, UpdateCategoryInput} from "./categories.dto";
 
-export async function handleCategoryUpdate(data: {name: string; color: string, id: string, userId: string}) {
+export async function handleCategoryUpdate(data: UpdateCategoryInput) : Promise<Category> {
     const updated = await updateCategory(data);
 
     if (updated.length === 0) {

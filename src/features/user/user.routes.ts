@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { loginSchema, registerSchema } from "../../validations/auth";
-import { registerUser, loginUser } from "./auth.service";
+import { registerUser, loginUser } from "./user.service";
+import {toUserResponse} from "./user.mapper";
 
 const router = Router();
 
@@ -13,7 +14,7 @@ router.post("/register", async (req, res) => {
 
     const user = await registerUser(result.data);
 
-    return res.status(201).json(user);
+    return res.status(201).json(toUserResponse(user));
 });
 
 router.post("/login", async (req, res) => {

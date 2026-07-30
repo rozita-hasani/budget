@@ -1,10 +1,13 @@
 import {getCategoryTransactions, getTransactionTotal} from "./summary.repository";
+import {
+    CategorySummaryInput,
+    CategorySummaryResponse,
+    MonthlySummary,
+    MonthlySummaryInput
+} from "./summary.dto";
+import {toCategorySummaryResponse} from "./summary.mapper";
 
-export async function calculateMonthlySummary(data: {
-    userId: string;
-    year: number;
-    month: number;
-}){
+export async function calculateMonthlySummary(data: MonthlySummaryInput): Promise<MonthlySummary>{
     const startDate = new Date(data.year, data.month - 1, 1);
     const endDate = new Date(data.year, data.month, 1);
 
@@ -28,14 +31,11 @@ export async function calculateMonthlySummary(data: {
     return {income, expense, balance}
 }
 
-export async function handleCategoryTransactions(data: {
-    userId: string;
-    year: number;
-    month: number;
-}) {
+export async function handleCategoryTransactions(data: CategorySummaryInput): Promise<CategorySummaryResponse[]> {
     const startDate = new Date(data.year, data.month - 1, 1);
     const endDate = new Date(data.year, data.month, 1);
 
-    return getCategoryTransactions({userId: data.userId, startDate, endDate})
+    const result = await getCategoryTransactions({userId: data.userId, startDate, endDate})
 
+    return result.map(toCategorySummaryResponse);
 }

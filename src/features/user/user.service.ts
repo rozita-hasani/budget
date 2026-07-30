@@ -1,12 +1,9 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { createUser, findUserByEmail } from "./auth.repository";
+import { createUser, findUserByEmail } from "./user.repository";
+import {LoginUserInput, RegisterUserInput, User} from "./user.dto";
 
-export async function registerUser(data: {
-    email: string;
-    username: string;
-    password: string;
-}) {
+export async function registerUser(data: RegisterUserInput): Promise<User> {
     const passwordHash = await bcrypt.hash(data.password, 10);
     const user = await createUser({
         email: data.email,
@@ -17,10 +14,7 @@ export async function registerUser(data: {
     return user[0];
 }
 
-export async function loginUser(data: {
-    email: string;
-    password: string;
-}) {
+export async function loginUser(data: LoginUserInput): Promise<string> {
     const user = await findUserByEmail(data.email);
 
     if (!user) {
