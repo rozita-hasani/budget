@@ -2,6 +2,7 @@ import {Router} from 'express';
 import {categorySchema} from "../../validations/category";
 import {createCategory, deleteCategory, getCategories} from "./categories.repository";
 import {handleCategoryUpdate} from "./categories.service.";
+import {toCategoryResponse} from "./categories.mapper";
 
 const router = Router();
 
@@ -16,7 +17,7 @@ router.post("/", async (req, res) => {
 
     const category = await createCategory({...result.data, userId})
 
-    return res.status(201).json(category[0]);
+    return res.status(201).json(toCategoryResponse(category[0]));
 })
 
 router.get("/", async (req, res) => {
@@ -24,7 +25,7 @@ router.get("/", async (req, res) => {
 
     const userCategories = await getCategories(userId);
 
-    return res.json(userCategories)
+    return res.json(userCategories.map(toCategoryResponse))
 })
 
 router.put("/:id", async (req, res) => {
@@ -39,7 +40,7 @@ router.put("/:id", async (req, res) => {
 
     const updatedCategory = await handleCategoryUpdate({...result.data, id, userId})
 
-    return res.json(updatedCategory);
+    return res.json(toCategoryResponse(updatedCategory));
 })
 
 router.delete("/:id", async (req, res) => {
@@ -48,7 +49,7 @@ router.delete("/:id", async (req, res) => {
 
     const deleted = await deleteCategory(id, userId);
 
-    if (deleted.length === 0) {
+    if (!deleted) {
         return res.status(404).json({message: "Category not found"});
     }
 

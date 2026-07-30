@@ -1,26 +1,23 @@
 import {db} from "../../db";
 import {categories} from "../../db/schema";
 import {and, eq} from "drizzle-orm";
+import {Category, CreateCategoryInput, UpdateCategoryInput} from "./categories.dto";
 
-export async function createCategory(data: {
-    name: string;
-    color: string;
-    userId: string;
-}){
+export async function createCategory(data: CreateCategoryInput) : Promise<Category[]> {
     return db
         .insert(categories)
         .values(data)
         .returning();
 }
 
-export async function getCategories(userId: string) {
+export async function getCategories(userId: string) : Promise<Category[]> {
     return db
         .select()
         .from(categories)
         .where(eq(categories.userId, userId))
 }
 
-export async function updateCategory(data: {name: string; color: string, id: string, userId: string}) {
+export async function updateCategory(data: UpdateCategoryInput) : Promise<Category[]> {
     return db
         .update(categories)
         .set({
@@ -36,8 +33,8 @@ export async function updateCategory(data: {name: string; color: string, id: str
         .returning();
 }
 
-export async function deleteCategory(id: string, userId: string) {
-    return db
+export async function deleteCategory(id: string, userId: string) : Promise<boolean> {
+    const deleted = await db
         .delete(categories)
         .where(
             and(
@@ -46,4 +43,6 @@ export async function deleteCategory(id: string, userId: string) {
             )
         )
         .returning();
+
+    return deleted.length > 0;
 }
