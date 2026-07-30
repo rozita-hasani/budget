@@ -1,13 +1,9 @@
 import {db} from "../../db";
 import {and, eq, gte, lt, sum} from "drizzle-orm";
 import {categories, transactions} from "../../db/schema";
+import {CategorySummary, CategoryTransactionInput, TransactionTotalInput} from "./summary.dto";
 
-export async function getTransactionTotal(data: {
-    userId: string;
-    type: "INCOME" | "EXPENSE";
-    startDate: Date;
-    endDate: Date;
-}) {
+export async function getTransactionTotal(data: TransactionTotalInput): Promise<{ total: string | null }[]> {
     return db
         .select({
             total: sum(transactions.amount),
@@ -23,11 +19,7 @@ export async function getTransactionTotal(data: {
         );
 }
 
-export async function getCategoryTransactions(data: {
-    userId: string;
-    startDate: Date;
-    endDate: Date;
-}) {
+export async function getCategoryTransactions(data: CategoryTransactionInput): Promise<CategorySummary[]> {
     return db
         .select({
             category: categories.name,
